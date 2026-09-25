@@ -1,6 +1,6 @@
 # Phase 1 Report - Baseline Pipeline
 
-_Generated at: 2026-09-25T09:38:58.594596+00:00_
+_Generated at: 2026-09-25T10:02:30.659557+00:00_
 
 ## 1. Source & Lineage
 
@@ -9,13 +9,13 @@ _Generated at: 2026-09-25T09:38:58.594596+00:00_
 | source_api | Crossref REST API |
 | source_query | agentic retrieval augmented generation large language model |
 | source_filter | from-pub-date:2026-03-29,has-abstract:true |
-| run_date | 2026-09-25T09:38:34.938097+00:00 |
+| run_date | 2026-09-25T09:59:40.053888+00:00 |
 | raw_response | data\raw\crossref_response.json |
 | raw_records | 24 |
 | clean_rows | 24 |
 | test_set_samples | 10 |
 | embedding_model | sentence-transformers/all-MiniLM-L6-v2 |
-| llm_provider | openai |
+| llm_provider | gemini |
 
 ## 2. Retrieval & Answer Quality (Baseline)
 
@@ -23,8 +23,8 @@ _Generated at: 2026-09-25T09:38:58.594596+00:00_
 | --- | ---: |
 | Retrieval Hit Rate | 1.0000 |
 | Mean Token F1 | 0.9219 |
-| Judge Accuracy | 0.7000 |
-| Mean Judge Score (1-5) | 4 |
+| Judge Accuracy | 0.8000 |
+| Mean Judge Score (1-5) | 4.4000 |
 | Samples | 10 |
 
 ### Breakdown by question type

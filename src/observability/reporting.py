@@ -113,6 +113,23 @@ def _delta(value: Any, reference: Any) -> str:
     return "-"
 
 
+def _gate(quality: dict[str, Any]) -> str:
+    if not quality:
+        return "-"
+    expectations = quality.get("expectations", [])
+    passed = sum(1 for e in expectations if e["success"])
+    if quality.get("gx_success", quality.get("success")):
+        return f"✅ PASSED ({passed}/{len(expectations)})"
+    return f"❌ FAILED ({len(expectations) - passed}/{len(expectations)} expectations lỗi)"
+
+
+def _freshness(freshness: dict[str, Any]) -> str:
+    if not freshness:
+        return "-"
+    ratio = f"{freshness.get('stale_ratio', 0):.0%} bài > {freshness.get('threshold_days')} ngày"
+    return f"✅ Đạt chuẩn ({ratio})" if freshness.get("is_fresh") else f"❌ Vi phạm ({ratio}, ngưỡng 25%)"
+
+
 def generate_corruption_report(
     report_path,
     baseline_metrics: dict[str, Any],
@@ -123,12 +140,25 @@ def generate_corruption_report(
     corrupted_freshness: dict[str, Any],
     repaired_freshness: dict[str, Any],
     corruption_log: dict[str, Any] | None = None,
+    baseline_quality: dict[str, Any] | None = None,
+    baseline_freshness: dict[str, Any] | None = None,
 ) -> None:
     """Viết markdown report so sánh 3 trạng thái Baseline / Corrupted / Repaired."""
+    baseline_quality = baseline_quality or {}
+    baseline_freshness = baseline_freshness or {}
     lines = [
         "# Corruption Report - Baseline vs Corrupted vs Repaired",
         "",
         f"_Generated at: {now_utc().isoformat()}_",
+        "",
+        "## 0. Bảng đối chiếu 3 trạng thái (nghiệm thu)",
+        "",
+        "| Metric / Chỉ số | Baseline (Dữ liệu Sạch) | Corrupted (Dữ liệu Bị Lỗi) | Repaired (Sau Khi Phục Hồi) |",
+        "| --- | --- | --- | --- |",
+        f"| Data Quality Gate | {_gate(baseline_quality)} | {_gate(corrupted_quality)} | {_gate(repaired_quality)} |",
+        f"| Kiểm tra Độ Tươi (Freshness) | {_freshness(baseline_freshness)} | {_freshness(corrupted_freshness)} | {_freshness(repaired_freshness)} |",
+        f"| Retrieval Hit Rate | {_fmt(baseline_metrics.get('retrieval_hit_rate'))} | {_fmt(corrupted_metrics.get('retrieval_hit_rate'))} | {_fmt(repaired_metrics.get('retrieval_hit_rate'))} |",
+        f"| Mean Token F1 | {_fmt(baseline_metrics.get('mean_token_f1'))} | {_fmt(corrupted_metrics.get('mean_token_f1'))} | {_fmt(repaired_metrics.get('mean_token_f1'))} |",
         "",
         "## 1. Performance Comparison",
         "",
@@ -159,30 +189,35 @@ def generate_corruption_report(
         "",
         "## 3. Data Quality Gate",
         "",
-        "| Check | Corrupted | Repaired |",
-        "| --- | --- | --- |",
-        f"| Overall | {_fmt(bool(corrupted_quality.get('success')))} | {_fmt(bool(repaired_quality.get('success')))} |",
-        f"| Rows | {corrupted_quality.get('total_rows')} | {repaired_quality.get('total_rows')} |",
+        "| Check | Baseline | Corrupted | Repaired |",
+        "| --- | --- | --- | --- |",
+        f"| Overall | {_fmt(bool(baseline_quality.get('success')))} | {_fmt(bool(corrupted_quality.get('success')))} "
+        f"| {_fmt(bool(repaired_quality.get('success')))} |",
+        f"| Rows | {baseline_quality.get('total_rows')} | {corrupted_quality.get('total_rows')} | {repaired_quality.get('total_rows')} |",
     ]
-    repaired_by_key = {
-        (e["expectation_type"], e.get("kwargs", {}).get("column")): e["success"]
-        for e in repaired_quality.get("expectations", [])
-    }
+    by_key = [
+        {(e["expectation_type"], e.get("kwargs", {}).get("column")): e["success"] for e in quality.get("expectations", [])}
+        for quality in (baseline_quality, repaired_quality)
+    ]
     for item in corrupted_quality.get("expectations", []):
-        column = item.get("kwargs", {}).get("column")
-        repaired_success = repaired_by_key.get((item["expectation_type"], column))
-        name = f"`{item['expectation_type']}`" + (f" ({column})" if column else "")
-        lines.append(f"| {name} | {_fmt(bool(item['success']))} | {_fmt(bool(repaired_success))} |")
+        key = (item["expectation_type"], item.get("kwargs", {}).get("column"))
+        name = f"`{key[0]}`" + (f" ({key[1]})" if key[1] else "")
+        lines.append(
+            f"| {name} | {_fmt(bool(by_key[0].get(key)))} | {_fmt(bool(item['success']))} | {_fmt(bool(by_key[1].get(key)))} |"
+        )
 
     lines += [
         "",
         "## 4. Freshness SLA",
         "",
-        "| Field | Corrupted | Repaired |",
-        "| --- | --- | --- |",
+        "| Field | Baseline | Corrupted | Repaired |",
+        "| --- | --- | --- | --- |",
     ]
     for key in corrupted_freshness:
-        lines.append(f"| {key} | {_fmt(corrupted_freshness.get(key))} | {_fmt(repaired_freshness.get(key))} |")
+        lines.append(
+            f"| {key} | {_fmt(baseline_freshness.get(key))} | {_fmt(corrupted_freshness.get(key))} "
+            f"| {_fmt(repaired_freshness.get(key))} |"
+        )
 
     hit_drop = (baseline_metrics.get("retrieval_hit_rate", 0) or 0) - (corrupted_metrics.get("retrieval_hit_rate", 0) or 0)
     f1_drop = (baseline_metrics.get("mean_token_f1", 0) or 0) - (corrupted_metrics.get("mean_token_f1", 0) or 0)
@@ -198,8 +233,9 @@ def generate_corruption_report(
         f"{hit_drop:.4f} and mean token F1 fell by {f1_drop:.4f}. Nothing crashed, so without monitoring the "
         "agent would keep serving wrong answers.",
         "- **Root causes:** dropped latest records remove ground-truth documents from the index; truncated titles "
-        "break exact title lookup; blank or noisy summaries corrupt both embeddings and extracted answers; stale "
-        "dates return wrong publication dates.",
+        "break exact title lookup; blank summaries corrupt both embeddings and extracted answers; noise injected into "
+        "`text_for_embedding` distorts the vectors used for retrieval; stale dates (5 years back) return wrong "
+        "publication dates; duplicate rows crowd the top-k results.",
         f"- **Detection:** the quality gate flagged the corrupted batch as "
         f"**{_fmt(bool(corrupted_quality.get('success')))}** (freshness: "
         f"{_fmt(bool(corrupted_freshness.get('is_fresh')))}), so it should be blocked before indexing.",

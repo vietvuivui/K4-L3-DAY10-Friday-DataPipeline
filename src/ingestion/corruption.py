@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
 import math
 import random
+from typing import Any
 
 import pandas as pd
 
@@ -14,10 +14,10 @@ BLANK_SUMMARY_RATIO = 0.25
 NOISE_RATIO = 0.25
 TRUNCATE_TITLE_RATIO = 0.25
 STALE_DATE_RATIO = 0.35
-DUPLICATE_RATIO = 0.20
-STALE_SHIFT_DAYS = 365
-TITLE_MAX_CHARS = 7
+STALE_SHIFT_YEARS = 5
+TITLE_MAX_CHARS = 7  # < 10 ký tự theo yêu cầu Pha 5
 NOISE_TOKENS = ["#@!", "zzxq", "��", "lorem", "ERR_0x7f", "%%%", "null", "<br/>", "qwrt"]
+PREVIEW_CHARS = 80
 
 
 def _pick(indices: list[int], ratio: float, rng: random.Random) -> list[int]:
@@ -27,6 +27,11 @@ def _pick(indices: list[int], ratio: float, rng: random.Random) -> list[int]:
 
 def _noise(rng: random.Random, length: int = 8) -> str:
     return " ".join(rng.choice(NOISE_TOKENS) for _ in range(length))
+
+
+def _preview(value: Any) -> str:
+    text = str(value)
+    return text if len(text) <= PREVIEW_CHARS else text[:PREVIEW_CHARS] + "..."
 
 
 def _rebuild_text(row: pd.Series) -> str:
@@ -39,107 +44,119 @@ def _rebuild_text(row: pd.Series) -> str:
     )
 
 
-def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
-    """Mô phỏng 6 dạng sự cố dữ liệu thường gặp trên cleaned dataframe.
+def _entry(corruption: str, description: str, details: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "corruption": corruption,
+        "description": description,
+        "affected_rows": len(details),
+        "paper_ids": [item["paper_id"] for item in details],
+        "details": details,
+    }
 
-    1. drop_latest_records: Bỏ 20% bài báo mới nhất (mất dữ liệu tươi).
-    2. blank_summary: Xóa trắng summary (lỗi cào dữ liệu rỗng).
-    3. inject_noise: Chèn chuỗi ký tự rác vào đầu summary.
-    4. truncate_title: Cắt title xuống dưới 8 ký tự.
-    5. stale_date: Lùi ngày xuất bản 365 ngày (dữ liệu bị mốc).
-    6. duplicate_rows: Nhân đôi một số dòng.
-    Sau đó rebuild `text_for_embedding` và ghi corruption log.
+
+def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
+    """Đóng vai "kẻ thử thách có chủ đích": tiêm 6 dạng sự cố dữ liệu vào cleaned dataframe.
+
+    1. drop_latest_records: Bỏ rơi 20% bài báo mới nhất (mất dữ liệu tươi).
+    2. blank_summary: Xóa trắng summary (thiếu thông tin).
+    3. inject_noise: Chèn chuỗi ký tự rác vô nghĩa vào `text_for_embedding`.
+    4. truncate_title: Cắt title xuống dưới 10 ký tự.
+    5. stale_date: Đổi ngày xuất bản về 5 năm trước (dữ liệu bị mốc meo).
+    6. duplicate_rows: Nhân đôi một số dòng (số dòng nhân đôi = số dòng bị bỏ, nên tổng số dòng
+       không đổi và một check row count đơn thuần không thể phát hiện).
+    Mỗi hành động được ghi chi tiết (giá trị trước/sau) vào corruption log.
     """
     rng = random.Random(CORRUPTION_SEED)
     corrupted = df.copy(deep=True).reset_index(drop=True)
-    log_entries: list[dict] = []
+    log_entries: list[dict[str, Any]] = []
 
     # 1. Drop latest records
     drop_count = max(1, math.ceil(len(corrupted) * DROP_LATEST_RATIO))
     latest = corrupted.sort_values(["published", "paper_id"], ascending=[False, True]).head(drop_count)
     corrupted = corrupted.drop(index=latest.index).reset_index(drop=True)
     log_entries.append(
-        {
-            "corruption": "drop_latest_records",
-            "description": f"Dropped the {drop_count} most recently published records.",
-            "affected_rows": drop_count,
-            "paper_ids": latest["paper_id"].tolist(),
-        }
+        _entry(
+            "drop_latest_records",
+            f"Dropped the {drop_count} most recently published records ({DROP_LATEST_RATIO:.0%}).",
+            [{"paper_id": row["paper_id"], "published": row["published"]} for _, row in latest.iterrows()],
+        )
     )
     indices = list(range(len(corrupted)))
 
     # 2. Blank summary (chuỗi rỗng để GX length check bắt được, null sẽ bị bỏ qua)
     blank_idx = _pick(indices, BLANK_SUMMARY_RATIO, rng)
+    blank_details = [
+        {
+            "paper_id": corrupted.at[i, "paper_id"],
+            "summary_chars_before": len(str(corrupted.at[i, "summary"])),
+            "summary_after": "",
+        }
+        for i in blank_idx
+    ]
     corrupted.loc[blank_idx, "summary"] = ""
-    log_entries.append(
-        {
-            "corruption": "blank_summary",
-            "description": "Replaced summary with an empty string.",
-            "affected_rows": len(blank_idx),
-            "paper_ids": corrupted.loc[blank_idx, "paper_id"].tolist(),
-        }
-    )
+    log_entries.append(_entry("blank_summary", "Replaced summary with an empty string.", blank_details))
 
-    # 3. Inject noise vào những dòng chưa bị blank
-    noise_pool = [i for i in indices if i not in blank_idx]
-    noise_idx = _pick(noise_pool, NOISE_RATIO, rng)
-    for i in noise_idx:
-        corrupted.at[i, "summary"] = f"{_noise(rng)} {corrupted.at[i, 'summary']} {_noise(rng, 4)}"
-    log_entries.append(
-        {
-            "corruption": "inject_noise",
-            "description": "Prepended and appended random garbage tokens to summary.",
-            "affected_rows": len(noise_idx),
-            "paper_ids": corrupted.loc[noise_idx, "paper_id"].tolist(),
-        }
-    )
-
-    # 4. Truncate title
+    # 3. Truncate title
     truncate_idx = _pick(indices, TRUNCATE_TITLE_RATIO, rng)
+    truncate_details = []
     for i in truncate_idx:
-        corrupted.at[i, "title"] = str(corrupted.at[i, "title"])[:TITLE_MAX_CHARS]
+        before = str(corrupted.at[i, "title"])
+        corrupted.at[i, "title"] = before[:TITLE_MAX_CHARS]
+        truncate_details.append(
+            {"paper_id": corrupted.at[i, "paper_id"], "title_before": _preview(before), "title_after": corrupted.at[i, "title"]}
+        )
     log_entries.append(
-        {
-            "corruption": "truncate_title",
-            "description": f"Truncated title to {TITLE_MAX_CHARS} characters.",
-            "affected_rows": len(truncate_idx),
-            "paper_ids": corrupted.loc[truncate_idx, "paper_id"].tolist(),
-        }
+        _entry("truncate_title", f"Truncated title to {TITLE_MAX_CHARS} characters (< 10).", truncate_details)
     )
 
-    # 5. Stale date
+    # 4. Stale date: lùi đúng 5 năm theo lịch (xử lý cả năm nhuận), cập nhật age_days tương ứng
     stale_idx = _pick(indices, STALE_DATE_RATIO, rng)
+    stale_details = []
     for i in stale_idx:
-        published = datetime.strptime(str(corrupted.at[i, "published"]), "%Y-%m-%d")
-        corrupted.at[i, "published"] = (published - timedelta(days=STALE_SHIFT_DAYS)).strftime("%Y-%m-%d")
-        corrupted.at[i, "age_days"] = int(corrupted.at[i, "age_days"]) + STALE_SHIFT_DAYS
-    log_entries.append(
-        {
-            "corruption": "stale_date",
-            "description": f"Shifted published date back by {STALE_SHIFT_DAYS} days.",
-            "affected_rows": len(stale_idx),
-            "paper_ids": corrupted.loc[stale_idx, "paper_id"].tolist(),
-        }
-    )
+        before = pd.Timestamp(str(corrupted.at[i, "published"]))
+        after = before - pd.DateOffset(years=STALE_SHIFT_YEARS)
+        corrupted.at[i, "published"] = after.strftime("%Y-%m-%d")
+        corrupted.at[i, "age_days"] = int(corrupted.at[i, "age_days"]) + (before - after).days
+        stale_details.append(
+            {
+                "paper_id": corrupted.at[i, "paper_id"],
+                "published_before": before.strftime("%Y-%m-%d"),
+                "published_after": corrupted.at[i, "published"],
+                "age_days_after": int(corrupted.at[i, "age_days"]),
+            }
+        )
+    log_entries.append(_entry("stale_date", f"Moved published date back {STALE_SHIFT_YEARS} years.", stale_details))
 
-    # 6. Duplicate rows
-    duplicate_idx = _pick(indices, DUPLICATE_RATIO, rng)
-    duplicates = corrupted.loc[duplicate_idx].copy()
-    log_entries.append(
-        {
-            "corruption": "duplicate_rows",
-            "description": "Appended exact copies of existing rows.",
-            "affected_rows": len(duplicate_idx),
-            "paper_ids": duplicates["paper_id"].tolist(),
-        }
-    )
-    corrupted = pd.concat([corrupted, duplicates], ignore_index=True)
-
-    # 7. Rebuild các cột phụ thuộc
+    # Rebuild các cột phụ thuộc để blank/truncate/stale chảy vào text_for_embedding
     corrupted["summary_chars"] = corrupted["summary"].str.len()
     corrupted["text_for_embedding"] = corrupted.apply(_rebuild_text, axis=1)
 
-    # 8. Ghi corruption log
+    # 5. Inject noise vào text_for_embedding (sau khi rebuild để không bị ghi đè).
+    #    Chỉ chọn các dòng chưa bị blank để tác động của từng lỗi tách bạch.
+    noise_pool = [i for i in indices if i not in blank_idx]
+    noise_idx = _pick(noise_pool, NOISE_RATIO, rng)
+    noise_details = []
+    for i in noise_idx:
+        prefix, suffix = _noise(rng), _noise(rng, 4)
+        corrupted.at[i, "text_for_embedding"] = f"{prefix}\n{corrupted.at[i, 'text_for_embedding']}\n{suffix}"
+        noise_details.append({"paper_id": corrupted.at[i, "paper_id"], "noise_prefix": prefix, "noise_suffix": suffix})
+    log_entries.append(
+        _entry("inject_noise", "Prepended and appended random garbage tokens to text_for_embedding.", noise_details)
+    )
+
+    # 6. Duplicate rows: nhân đôi đúng bằng số dòng đã bị drop
+    duplicate_idx = sorted(rng.sample(indices, min(drop_count, len(indices))))
+    duplicates = corrupted.loc[duplicate_idx].copy()
+    log_entries.append(
+        _entry(
+            "duplicate_rows",
+            f"Appended exact copies of {len(duplicate_idx)} existing rows.",
+            [{"paper_id": paper_id} for paper_id in duplicates["paper_id"]],
+        )
+    )
+    corrupted = pd.concat([corrupted, duplicates], ignore_index=True)
+
+    # Ghi corruption log
     write_json(
         output_log_path,
         {
@@ -147,6 +164,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
             "seed": CORRUPTION_SEED,
             "input_rows": len(df),
             "output_rows": len(corrupted),
+            "corruption_types": len(log_entries),
             "corruptions": log_entries,
         },
     )

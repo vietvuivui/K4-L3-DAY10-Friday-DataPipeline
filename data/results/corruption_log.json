@@ -1,12 +1,13 @@
 {
-  "generated_at": "2026-09-25T09:24:57.422044+00:00",
+  "generated_at": "2026-09-25T10:03:01.343355+00:00",
   "seed": 42,
   "input_rows": 24,
-  "output_rows": 23,
+  "output_rows": 24,
+  "corruption_types": 6,
   "corruptions": [
     {
       "corruption": "drop_latest_records",
-      "description": "Dropped the 5 most recently published records.",
+      "description": "Dropped the 5 most recently published records (20%).",
       "affected_rows": 5,
       "paper_ids": [
         "10.21203/rs.3.rs-10489777/v1",
@@ -14,6 +15,28 @@
         "10.21203/rs.3.rs-10349437/v1",
         "10.54254/2755-2721/2026.36624",
         "10.36887/2415-8453-2026-3-2"
+      ],
+      "details": [
+        {
+          "paper_id": "10.21203/rs.3.rs-10489777/v1",
+          "published": "2026-09-15"
+        },
+        {
+          "paper_id": "10.70267/aitia.2026482489",
+          "published": "2026-09-13"
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10349437/v1",
+          "published": "2026-09-12"
+        },
+        {
+          "paper_id": "10.54254/2755-2721/2026.36624",
+          "published": "2026-09-08"
+        },
+        {
+          "paper_id": "10.36887/2415-8453-2026-3-2",
+          "published": "2026-09-04"
+        }
       ]
     },
     {
@@ -26,54 +49,192 @@
         "10.21203/rs.3.rs-10178277/v1",
         "10.2196/preprints.106157",
         "10.63125/gseh0k17"
-      ]
-    },
-    {
-      "corruption": "inject_noise",
-      "description": "Prepended and appended random garbage tokens to summary.",
-      "affected_rows": 4,
-      "paper_ids": [
-        "10.21203/rs.3.rs-10423755/v1",
-        "10.36948/ijfmr.2026.v08i04.85777",
-        "10.52060/juptik.v4i1.4318",
-        "10.55041/isjem07213"
+      ],
+      "details": [
+        {
+          "paper_id": "10.28932/jutisi.v12i2.13099",
+          "summary_chars_before": 1809,
+          "summary_after": ""
+        },
+        {
+          "paper_id": "10.3390/knowledge6030022",
+          "summary_chars_before": 1672,
+          "summary_after": ""
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10178277/v1",
+          "summary_chars_before": 1936,
+          "summary_after": ""
+        },
+        {
+          "paper_id": "10.2196/preprints.106157",
+          "summary_chars_before": 1765,
+          "summary_after": ""
+        },
+        {
+          "paper_id": "10.63125/gseh0k17",
+          "summary_chars_before": 3814,
+          "summary_after": ""
+        }
       ]
     },
     {
       "corruption": "truncate_title",
-      "description": "Truncated title to 7 characters.",
+      "description": "Truncated title to 7 characters (< 10).",
       "affected_rows": 5,
       "paper_ids": [
+        "10.28932/jutisi.v12i2.13099",
+        "10.21203/rs.3.rs-10423755/v1",
         "10.3390/knowledge6030022",
-        "10.2196/preprints.106157",
-        "10.21079/11681/50309",
-        "10.21203/rs.3.rs-10012178/v1",
-        "10.52060/juptik.v4i1.4318"
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.47576/2949-1894.2026.7.7.023"
+      ],
+      "details": [
+        {
+          "paper_id": "10.28932/jutisi.v12i2.13099",
+          "title_before": "Transformasi Layanan Informasi Berbasis Chatbot Retrieval-Augmented Generation d...",
+          "title_after": "Transfo"
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10423755/v1",
+          "title_before": "Evidence Constrained Agentic Retrieval Augmented Generation for Substation Civil...",
+          "title_after": "Evidenc"
+        },
+        {
+          "paper_id": "10.3390/knowledge6030022",
+          "title_before": "Integrating Retrieval-Augmented Generation with Large Language Model for Robust ...",
+          "title_after": "Integra"
+        },
+        {
+          "paper_id": "10.36948/ijfmr.2026.v08i04.85777",
+          "title_before": "A Framework for Adaptive Knowledge-Augmented Mizo Large Language Models Using Re...",
+          "title_after": "A Frame"
+        },
+        {
+          "paper_id": "10.47576/2949-1894.2026.7.7.023",
+          "title_before": "\u0421\u043d\u0438\u0436\u0435\u043d\u0438\u0435 \u0440\u0438\u0441\u043a\u043e\u0432 \u043f\u0440\u0438\u043c\u0435\u043d\u0435\u043d\u0438\u044f LLM (Large Language Model) \u0432 \u0441\u0444\u0435\u0440\u0435 \u044d\u043a\u043e\u043d\u043e\u043c\u0438\u0447\u0435\u0441\u043a\u043e\u0439 \u0431\u0435\u0437\u043e...",
+          "title_after": "\u0421\u043d\u0438\u0436\u0435\u043d\u0438"
+        }
       ]
     },
     {
       "corruption": "stale_date",
-      "description": "Shifted published date back by 365 days.",
+      "description": "Moved published date back 5 years.",
       "affected_rows": 7,
       "paper_ids": [
-        "10.3390/knowledge6030022",
-        "10.36948/ijfmr.2026.v08i04.85777",
-        "10.2118/234689-pa",
-        "10.21079/11681/50309",
-        "10.63646/kpqm1958",
-        "10.1093/sleep/zsag091.0346",
+        "10.28932/jutisi.v12i2.13099",
+        "10.21203/rs.3.rs-10423755/v1",
+        "10.1007/s10278-026-02086-9",
+        "10.21203/rs.3.rs-10178277/v1",
+        "10.2196/preprints.106157",
+        "10.3390/buildings16132637",
         "10.63125/gseh0k17"
+      ],
+      "details": [
+        {
+          "paper_id": "10.28932/jutisi.v12i2.13099",
+          "published_before": "2026-08-27",
+          "published_after": "2021-08-27",
+          "age_days_after": 1855
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10423755/v1",
+          "published_before": "2026-08-26",
+          "published_after": "2021-08-26",
+          "age_days_after": 1856
+        },
+        {
+          "paper_id": "10.1007/s10278-026-02086-9",
+          "published_before": "2026-07-13",
+          "published_after": "2021-07-13",
+          "age_days_after": 1900
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10178277/v1",
+          "published_before": "2026-07-10",
+          "published_after": "2021-07-10",
+          "age_days_after": 1903
+        },
+        {
+          "paper_id": "10.2196/preprints.106157",
+          "published_before": "2026-07-03",
+          "published_after": "2021-07-03",
+          "age_days_after": 1910
+        },
+        {
+          "paper_id": "10.3390/buildings16132637",
+          "published_before": "2026-07-02",
+          "published_after": "2021-07-02",
+          "age_days_after": 1911
+        },
+        {
+          "paper_id": "10.63125/gseh0k17",
+          "published_before": "2026-04-01",
+          "published_after": "2021-04-01",
+          "age_days_after": 2003
+        }
+      ]
+    },
+    {
+      "corruption": "inject_noise",
+      "description": "Prepended and appended random garbage tokens to text_for_embedding.",
+      "affected_rows": 4,
+      "paper_ids": [
+        "10.2118/234689-pa",
+        "10.21203/rs.3.rs-10012178/v1",
+        "10.52060/juptik.v4i1.4318",
+        "10.55041/isjem07213"
+      ],
+      "details": [
+        {
+          "paper_id": "10.2118/234689-pa",
+          "noise_prefix": "qwrt null lorem <br/> ERR_0x7f #@! \ufffd\ufffd null",
+          "noise_suffix": "%%% ERR_0x7f \ufffd\ufffd lorem"
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10012178/v1",
+          "noise_prefix": "%%% zzxq zzxq null zzxq %%% %%% ERR_0x7f",
+          "noise_suffix": "#@! <br/> qwrt zzxq"
+        },
+        {
+          "paper_id": "10.52060/juptik.v4i1.4318",
+          "noise_prefix": "null zzxq qwrt ERR_0x7f %%% lorem zzxq #@!",
+          "noise_suffix": "lorem ERR_0x7f zzxq lorem"
+        },
+        {
+          "paper_id": "10.55041/isjem07213",
+          "noise_prefix": "zzxq null ERR_0x7f <br/> %%% \ufffd\ufffd %%% %%%",
+          "noise_suffix": "lorem ERR_0x7f zzxq \ufffd\ufffd"
+        }
       ]
     },
     {
       "corruption": "duplicate_rows",
-      "description": "Appended exact copies of existing rows.",
-      "affected_rows": 4,
+      "description": "Appended exact copies of 5 existing rows.",
+      "affected_rows": 5,
       "paper_ids": [
-        "10.21203/rs.3.rs-10423755/v1",
         "10.2118/234689-pa",
+        "10.1007/s10278-026-02086-9",
         "10.21203/rs.3.rs-10178277/v1",
+        "10.52060/juptik.v4i1.4318",
         "10.20944/preprints202604.0339.v1"
+      ],
+      "details": [
+        {
+          "paper_id": "10.2118/234689-pa"
+        },
+        {
+          "paper_id": "10.1007/s10278-026-02086-9"
+        },
+        {
+          "paper_id": "10.21203/rs.3.rs-10178277/v1"
+        },
+        {
+          "paper_id": "10.52060/juptik.v4i1.4318"
+        },
+        {
+          "paper_id": "10.20944/preprints202604.0339.v1"
+        }
       ]
     }
   ]

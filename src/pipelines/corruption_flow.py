@@ -89,6 +89,8 @@ def main() -> None:
         corrupted_freshness,
         repaired_freshness,
         corruption_log=read_json(paths.corruption_log),
+        baseline_quality=read_json(paths.baseline_quality_report) if paths.baseline_quality_report.exists() else None,
+        baseline_freshness=read_json(paths.freshness_report) if paths.freshness_report.exists() else None,
     )
     _print_comparison(baseline_metrics, corrupted_metrics, repaired_metrics)
     print(f"[5/5] Comparison report written to {paths.comparison_report}")
