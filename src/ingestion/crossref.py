@@ -136,7 +136,8 @@ def parse_crossref_payload(payload: dict) -> list[PaperRecord]:
             raw_summary = str(raw_summary[0])
         elif not isinstance(raw_summary, str):
             raw_summary = str(raw_summary)
-        summary = _clean_text(raw_summary)
+        # Bỏ heading JATS còn sót lại ở đầu tóm tắt ("Abstract ...", "Summary ...")
+        summary = re.sub(r"^(abstract|summary)\b\s*[:.\-]?\s*", "", _clean_text(raw_summary), flags=re.IGNORECASE)
         if not summary:
             continue
 
@@ -166,6 +167,20 @@ def parse_crossref_payload(payload: dict) -> list[PaperRecord]:
             categories = [_clean_text(raw_subjects)]
         else:
             categories = []
+        if not categories:
+            # Crossref hiếm khi còn trả `subject`: fallback sang nơi đăng (journal / group) và loại công trình
+            venues = item.get("container-title") or []
+            if isinstance(venues, str):
+                venues = [venues]
+            group_title = item.get("group-title")
+            if not venues and isinstance(group_title, str) and group_title.strip().lower() != "in review":
+                venues = [group_title]
+            if not venues:
+                venues = [inst.get("name", "") for inst in item.get("institution", []) if isinstance(inst, dict)]
+            categories = [_clean_text(str(v)) for v in venues if _clean_text(str(v))]
+            work_type = _clean_text(str(item.get("type", "")))
+            if work_type:
+                categories.append(work_type)
         primary_category = categories[0] if categories else ""
 
         # published: Parse định dạng ngày ISO 8601 (YYYY-MM-DD)

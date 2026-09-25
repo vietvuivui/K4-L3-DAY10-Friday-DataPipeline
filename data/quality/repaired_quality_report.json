@@ -2,11 +2,11 @@
   "success": true,
   "gx_success": true,
   "is_fresh": true,
-  "report_name": "test",
-  "evaluated_at": "2026-09-25T09:02:00.468931+00:00",
+  "report_name": "repaired",
+  "evaluated_at": "2026-09-25T09:25:10.286219+00:00",
   "total_rows": 24,
-  "stale_rows": 1,
-  "stale_ratio": 0.041666666666666664,
+  "stale_rows": 0,
+  "stale_ratio": 0.0,
   "threshold_days": 180,
   "expectations": [
     {

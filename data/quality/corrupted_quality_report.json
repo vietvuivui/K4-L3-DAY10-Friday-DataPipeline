@@ -1,0 +1,168 @@
+{
+  "success": false,
+  "gx_success": false,
+  "is_fresh": false,
+  "report_name": "corrupted",
+  "evaluated_at": "2026-09-25T09:24:57.525733+00:00",
+  "total_rows": 23,
+  "stale_rows": 8,
+  "stale_ratio": 0.34782608695652173,
+  "threshold_days": 180,
+  "expectations": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "success": true,
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "min_value": 5,
+        "max_value": 5000
+      },
+      "result": {
+        "observed_value": 23
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "success": true,
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "paper_id"
+      },
+      "result": {
+        "element_count": 23,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "success": false,
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "paper_id"
+      },
+      "result": {
+        "element_count": 23,
+        "unexpected_count": 8,
+        "unexpected_percent": 34.78260869565217,
+        "partial_unexpected_list": [
+          "10.21203/rs.3.rs-10423755/v1",
+          "10.2118/234689-pa",
+          "10.21203/rs.3.rs-10178277/v1",
+          "10.20944/preprints202604.0339.v1",
+          "10.21203/rs.3.rs-10423755/v1",
+          "10.2118/234689-pa",
+          "10.21203/rs.3.rs-10178277/v1",
+          "10.20944/preprints202604.0339.v1"
+        ],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 34.78260869565217,
+        "unexpected_percent_nonmissing": 34.78260869565217,
+        "partial_unexpected_counts": [
+          {
+            "value": "10.20944/preprints202604.0339.v1",
+            "count": 2
+          },
+          {
+            "value": "10.2118/234689-pa",
+            "count": 2
+          },
+          {
+            "value": "10.21203/rs.3.rs-10178277/v1",
+            "count": 2
+          },
+          {
+            "value": "10.21203/rs.3.rs-10423755/v1",
+            "count": 2
+          }
+        ],
+        "partial_unexpected_index_list": [
+          2,
+          5,
+          7,
+          17,
+          19,
+          20,
+          21,
+          22
+        ]
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "success": true,
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "title"
+      },
+      "result": {
+        "element_count": 23,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "success": true,
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "text_for_embedding"
+      },
+      "result": {
+        "element_count": 23,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "partial_unexpected_list": [],
+        "partial_unexpected_counts": [],
+        "partial_unexpected_index_list": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_value_lengths_to_be_between",
+      "success": false,
+      "kwargs": {
+        "batch_id": "papers_source-papers_asset",
+        "column": "summary",
+        "min_value": 30
+      },
+      "result": {
+        "element_count": 23,
+        "unexpected_count": 6,
+        "unexpected_percent": 26.08695652173913,
+        "partial_unexpected_list": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 26.08695652173913,
+        "unexpected_percent_nonmissing": 26.08695652173913,
+        "partial_unexpected_counts": [
+          {
+            "value": "",
+            "count": 6
+          }
+        ],
+        "partial_unexpected_index_list": [
+          0,
+          3,
+          7,
+          8,
+          18,
+          21
+        ]
+      }
+    }
+  ]
+}

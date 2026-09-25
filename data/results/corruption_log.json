@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-09-25T09:24:57.422044+00:00",
+  "seed": 42,
+  "input_rows": 24,
+  "output_rows": 23,
+  "corruptions": [
+    {
+      "corruption": "drop_latest_records",
+      "description": "Dropped the 5 most recently published records.",
+      "affected_rows": 5,
+      "paper_ids": [
+        "10.21203/rs.3.rs-10489777/v1",
+        "10.70267/aitia.2026482489",
+        "10.21203/rs.3.rs-10349437/v1",
+        "10.54254/2755-2721/2026.36624",
+        "10.36887/2415-8453-2026-3-2"
+      ]
+    },
+    {
+      "corruption": "blank_summary",
+      "description": "Replaced summary with an empty string.",
+      "affected_rows": 5,
+      "paper_ids": [
+        "10.28932/jutisi.v12i2.13099",
+        "10.3390/knowledge6030022",
+        "10.21203/rs.3.rs-10178277/v1",
+        "10.2196/preprints.106157",
+        "10.63125/gseh0k17"
+      ]
+    },
+    {
+      "corruption": "inject_noise",
+      "description": "Prepended and appended random garbage tokens to summary.",
+      "affected_rows": 4,
+      "paper_ids": [
+        "10.21203/rs.3.rs-10423755/v1",
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.52060/juptik.v4i1.4318",
+        "10.55041/isjem07213"
+      ]
+    },
+    {
+      "corruption": "truncate_title",
+      "description": "Truncated title to 7 characters.",
+      "affected_rows": 5,
+      "paper_ids": [
+        "10.3390/knowledge6030022",
+        "10.2196/preprints.106157",
+        "10.21079/11681/50309",
+        "10.21203/rs.3.rs-10012178/v1",
+        "10.52060/juptik.v4i1.4318"
+      ]
+    },
+    {
+      "corruption": "stale_date",
+      "description": "Shifted published date back by 365 days.",
+      "affected_rows": 7,
+      "paper_ids": [
+        "10.3390/knowledge6030022",
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.2118/234689-pa",
+        "10.21079/11681/50309",
+        "10.63646/kpqm1958",
+        "10.1093/sleep/zsag091.0346",
+        "10.63125/gseh0k17"
+      ]
+    },
+    {
+      "corruption": "duplicate_rows",
+      "description": "Appended exact copies of existing rows.",
+      "affected_rows": 4,
+      "paper_ids": [
+        "10.21203/rs.3.rs-10423755/v1",
+        "10.2118/234689-pa",
+        "10.21203/rs.3.rs-10178277/v1",
+        "10.20944/preprints202604.0339.v1"
+      ]
+    }
+  ]
+}
