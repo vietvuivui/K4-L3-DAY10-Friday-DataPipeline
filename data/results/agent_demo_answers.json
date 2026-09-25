@@ -1,5 +1,10 @@
 [
   {
-    "skipped": "Agent demo unavailable: "
+    "question": "What is the main research contribution summarized in the paper 'Microsoft Azure artificial intelligence / machine learning hackathon for development of retrieval-augmented generation large language model'?",
+    "answer": "The paper titled \"Microsoft Azure artificial intelligence / machine learning hackathon for development of retrieval-augmented generation large language model\" primarily discusses the efforts of the US Army Corps of Engineers (USACE) in addressing environmental sustainability challenges through innovative science and engineering. It highlights the role of the US Army Engineer Research and Development Center (ERDC) in planning and executing research and development programs across various strategic focus areas, including artificial intelligence. The paper emphasizes the generation of significant information during this process, which includes internal progress reviews, financial reports, and success stories."
+  },
+  {
+    "question": "What is the main research contribution summarized in the paper 'SafeRAG: A Large-Language-Model-Based Multistage Retrieval-Augmented Framework for Oil and Gas Safety Report Generation'?",
+    "answer": "The main research contribution of the paper \"SafeRAG: A Large-Language-Model-Based Multistage Retrieval-Augmented Framework for Oil and Gas Safety Report Generation\" is the introduction of SafeRAG, a multistage retrieval-augmented framework designed to enhance the generation of safety reports in high-risk industrial settings, particularly in the oil and gas sector. \n\nSafeRAG addresses the limitations of large language models (LLMs) in generating domain-specific analyses and ensuring regulatory compliance by employing an entity-centric approach. This framework prompts LLMs to generate internal domain-specific knowledge while simultaneously retrieving relevant external regulations at various levels (topic, concept, and context). The integration of prompt engineering and the assignment of a domain-expert persona further improve the analysis of accidents.\n\nThe effectiveness of SafeRAG is demonstrated through experiments on a dataset of 10,818 accident-description/report pairs, showing significant performance improvements over baseline LLMs as measured by metrics such as BERTScore and BARTScore."
   }
 ]
