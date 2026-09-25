@@ -5,7 +5,7 @@
 | Thông tin         | Nội dung                  |
 | ------------------ | -------------------------- |
 | Họ và tên       | Nguyễn Xuân Khuê |
-| MSSV               | [MSSV] |
+| MSSV               | 02999 |
 | Khóa/Lớp         | K4 — L3 — Day 10 |
 | Tên nhóm         | Friday |
 | Vai trò chính    | Pha 2 — Ingestion, Cleaning & Data Quality Gate |

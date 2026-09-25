@@ -5,7 +5,7 @@
 | Thông tin         | Nội dung                  |
 | ------------------ | -------------------------- |
 | Họ và tên       | Nguyễn Việt Hùng |
-| MSSV               | [MSSV] |
+| MSSV               | 02972 |
 | Khóa/Lớp         | K4 — L3 — Day 10 |
 | Tên nhóm         | Friday |
 | Vai trò chính    | Pha 5 — Data Corruption & đo lường suy giảm |

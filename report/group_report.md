@@ -13,10 +13,10 @@
 
 | STT | Họ và tên | MSSV | Vai trò chính | Module/deliverable sở hữu |
 | --: | --- | --- | --- | --- |
-| 1 | Nguyễn Văn Quốc Việt (Trưởng nhóm) | [MSSV] | Pha 3 — Evaluation set, index & tích hợp | `evaluation/testset.py`, `retrieval/index.py`, `pipelines/phase1.py`, `pipelines/corruption_flow.py`, `observability/reporting.py` |
-| 2 | Nguyễn Xuân Khuê | [MSSV] | Pha 2 — Ingestion, cleaning & quality gate | `ingestion/crossref.py`, `ingestion/cleaning.py`, `observability/quality.py` |
-| 3 | Thái Hữu Tuấn | [MSSV] | Pha 4 — Baseline end-to-end | `script/run_phase1.py` → `baseline_metrics.json`, `phase1_report.md`, `agent_demo_answers.json` |
-| 4 | Nguyễn Việt Hùng | [MSSV] | Pha 5 — Corruption & đo suy giảm | `ingestion/corruption.py`, `corruption_log.json`, `corrupted_metrics.json`, `corruption_report.md` |
+| 1 | Nguyễn Văn Quốc Việt (Trưởng nhóm) | 02973 | Pha 3 — Evaluation set, index & tích hợp | `evaluation/testset.py`, `retrieval/index.py`, `pipelines/phase1.py`, `pipelines/corruption_flow.py`, `observability/reporting.py` |
+| 2 | Nguyễn Xuân Khuê | 02999 | Pha 2 — Ingestion, cleaning & quality gate | `ingestion/crossref.py`, `ingestion/cleaning.py`, `observability/quality.py` |
+| 3 | Thái Hữu Tuấn | 02465 | Pha 4 — Baseline end-to-end | `script/run_phase1.py` → `baseline_metrics.json`, `phase1_report.md`, `agent_demo_answers.json` |
+| 4 | Nguyễn Việt Hùng | 02972 | Pha 5 — Corruption & đo suy giảm | `ingestion/corruption.py`, `corruption_log.json`, `corrupted_metrics.json`, `corruption_report.md` |
 
 ## 2. Tóm tắt kết quả
 

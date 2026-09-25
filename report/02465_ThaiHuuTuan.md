@@ -5,7 +5,7 @@
 | Thông tin         | Nội dung                  |
 | ------------------ | -------------------------- |
 | Họ và tên       | Thái Hữu Tuấn |
-| MSSV               | [MSSV] |
+| MSSV               | 02465 |
 | Khóa/Lớp         | K4 — L3 — Day 10 |
 | Tên nhóm         | Friday |
 | Vai trò chính    | Pha 4 — Baseline end-to-end & nghiệm thu Phase 1 |

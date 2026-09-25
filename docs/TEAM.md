@@ -10,16 +10,16 @@
 
 | STT | Họ và tên | MSSV | Email | Vai trò & Phân công công việc | Báo cáo cá nhân |
 |---:|---|---|---|---|---|
-| 1 | Nguyễn Văn Quốc Việt | [MSSV] | bestyasuoplay@gmail.com | **Trưởng nhóm — Pha 3:** Evaluation set & Pipeline Integrator (`testset.py`, `retrieval/index.py`, `phase1.py`, `corruption_flow.py`, `reporting.py`) | `report/MSSV_NguyenVanQuocViet.md` |
-| 2 | Nguyễn Xuân Khuê | [MSSV] | Khue09022004@gmail.com | **Pha 2:** Ingestion, Cleaning & Quality Gate (`crossref.py`, `cleaning.py`, `quality.py` GX 1.x) | `report/MSSV_NguyenXuanKhue.md` |
-| 3 | Thái Hữu Tuấn | [MSSV] | tuanthhtq@gmail.com | **Pha 4:** Baseline end-to-end & nghiệm thu Phase 1 (`run_phase1.py`, `baseline_metrics.json`, `phase1_report.md`, agent demo) | `report/MSSV_ThaiHuuTuan.md` |
-| 4 | Nguyễn Việt Hùng | [MSSV] | hungviet1803@gmail.com | **Pha 5:** Data Corruption, đo suy giảm & báo cáo đối chiếu 3 trạng thái (`corruption.py`, `corruption_flow.py`, `corruption_report.md`) | `report/MSSV_NguyenVietHung.md` |
+| 1 | Nguyễn Văn Quốc Việt | 02973 | bestyasuoplay@gmail.com | **Trưởng nhóm — Pha 3:** Evaluation set & Pipeline Integrator (`testset.py`, `retrieval/index.py`, `phase1.py`, `corruption_flow.py`, `reporting.py`) | `report/02973_NguyenVanQuocViet.md` |
+| 2 | Nguyễn Xuân Khuê | 02999 | Khue09022004@gmail.com | **Pha 2:** Ingestion, Cleaning & Quality Gate (`crossref.py`, `cleaning.py`, `quality.py` GX 1.x) | `report/02999_NguyenXuanKhue.md` |
+| 3 | Thái Hữu Tuấn | 02465 | tuanthhtq@gmail.com | **Pha 4:** Baseline end-to-end & nghiệm thu Phase 1 (`run_phase1.py`, `baseline_metrics.json`, `phase1_report.md`, agent demo) | `report/02465_ThaiHuuTuan.md` |
+| 4 | Nguyễn Việt Hùng | 02972 | hungviet1803@gmail.com | **Pha 5:** Data Corruption, đo suy giảm & báo cáo đối chiếu 3 trạng thái (`corruption.py`, `corruption_flow.py`, `corruption_report.md`) | `report/02972_NguyenVietHung.md` |
 
 ---
 
 ## # Cá nhân
 
-### ## NguyenVanQuocViet-[MSSV]
+### ## NguyenVanQuocViet-02973
 - **Vai trò:** Trưởng nhóm — Pha 3 (Evaluation set, Vector Index & tích hợp pipeline).
 - **Công việc chi tiết đã hoàn thành** (commit `c167182`):
   - Xây dựng bộ test set cố định 10 câu, 5 dạng (`summary`, `authors`, `date`, `category`, `multi_hop`) trong `src/evaluation/testset.py`, kèm `load_or_create_test_set` để tái sử dụng cùng một test set cho cả 3 trạng thái.
@@ -29,7 +29,7 @@
 - **Điều học được / Đóng góp chính:**
   - Test set phải được đóng băng và dùng chung cho baseline/corrupted/repaired thì phép so sánh mới có ý nghĩa.
 
-### ## NguyenXuanKhue-[MSSV]
+### ## NguyenXuanKhue-02999
 - **Vai trò:** Pha 2 — Ingestion, Cleaning & Data Quality Gate.
 - **Công việc chi tiết đã hoàn thành** (commit `589d25e`):
   - Xây dựng `src/ingestion/crossref.py`: gọi Crossref REST API có retry, lưu raw response, parse DOI/title/abstract (bỏ thẻ JATS)/authors/dates; fallback đọc snapshot khi gặp 429 hoặc mất mạng.
@@ -38,7 +38,7 @@
 - **Điều học được / Đóng góp chính:**
   - Bảo toàn raw snapshot (data lineage) để mọi bước phía sau có thể tái tạo lại mà không phụ thuộc API.
 
-### ## ThaiHuuTuan-[MSSV]
+### ## ThaiHuuTuan-02465
 - **Vai trò:** Pha 4 — Chạy Baseline end-to-end & nghiệm thu Phase 1.
 - **Công việc chi tiết đã hoàn thành** (commit `082dbce`):
   - Chạy `python script/run_phase1.py` trên code đã tích hợp, sinh lại `baseline_metrics.json`, `baseline_answers.json`, `phase1_report.md`, `agent_demo_answers.json` và index `papers-baseline`.
@@ -46,7 +46,7 @@
 - **Điều học được / Đóng góp chính:**
   - Baseline phải được đo trước khi tiêm lỗi; mọi kết luận ở Pha 5 đều được so sánh với mốc này.
 
-### ## NguyenVietHung-[MSSV]
+### ## NguyenVietHung-02972
 - **Vai trò:** Pha 5 — Thử thách tiêm độc tố dữ liệu & đo lường suy giảm.
 - **Công việc chi tiết đã hoàn thành:**
   - Chỉnh `src/ingestion/corruption.py` theo đúng đặc tả Pha 5: noise chèn vào `text_for_embedding`, title < 10 ký tự, lùi ngày xuất bản đúng 5 năm (có cập nhật `age_days`), số dòng nhân bản bằng số dòng bị drop (24 → 24 dòng).

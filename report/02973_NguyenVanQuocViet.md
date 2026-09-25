@@ -5,7 +5,7 @@
 | Thông tin         | Nội dung                  |
 | ------------------ | -------------------------- |
 | Họ và tên       | Nguyễn Văn Quốc Việt |
-| MSSV               | [MSSV] |
+| MSSV               | 02973 |
 | Khóa/Lớp         | K4 — L3 — Day 10 |
 | Tên nhóm         | Friday |
 | Vai trò chính    | Trưởng nhóm — Pha 3: Evaluation set, Vector Index & tích hợp pipeline |
